@@ -1,34 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
   <title>Chat App</title>
 </head>
 <body>
-  <ul id="messages"></ul>
-  <form id="form" action="">
-    <input id="input" autocomplete="off" /><button>Send</button>
-  </form>
+  <div class="chat-container">
+    <div class="sidebar">
+      <!-- Sidebar content (list of contacts or rooms) -->
+    </div>
+    <div class="chat-area">
+      <div class="chat-header">
+        <!-- Header content (contact/room name and options) -->
+      </div>
+      <div class="chat-messages">
+        <!-- Messages will be displayed here -->
+      </div>
+      <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Type a message...">
+        <button id="send-button">Send</button>
+      </div>
+    </div>
+  </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script> 
+        const socket = io.connect('http://localhost:3000');
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
+        const username = prompt('Enter your username:');
+        if (username.trim() !== '') {
+            socket.emit('user joined', username);
+        }
 
-    document.querySelector('#form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const input = document.querySelector('#input');
-      const message = input.value;
-      if (message.trim() !== '') {
-        socket.emit('chat message', message);
-        input.value = '';
-      }
-    });
+        socket.on("update userList", (users) => {
+           
+            
+            users.forEach((user) => {
+                const sideBar = document.querySelector('.sidebar');
+                const li = document.createElement('li');
+                li.textContent = user;
+                sideBar.appendChild(li);
 
-    socket.on('chat message', (msg) => {
-      const messages = document.querySelector('#messages');
-      const li = document.createElement('li');
-      li.textContent = msg;
-      messages.appendChild(li);
-    });
-  </script>
+            });
+        });
+        
+        
+        
+
+        document.getElementById('send-button').addEventListener('click', () => {
+            //e.preventDefault();
+            const input = document.querySelector('#message-input');
+            const message = input.value;
+            if (message.trim() !== '') {
+                    const msgObject = {
+                    text: message,
+                    sentByUser: true // Indicate that the message was sent by the user
+            };
+                socket.emit('chat message', msgObject);
+             input.value = '';
+            }
+        });
+
+        socket.on('chat message', (msg) => {
+            const messages = document.querySelector('.chat-messages');
+            const newMessageDiv = document.createElement('div');
+            document.getElementById('message-input').value = "";
+            const li = document.createElement('li');
+            li.textContent = msg.text;
+          
+            if (msg.sentByUser) {
+              li.classList.add('sent-message');
+            } else {
+              li.classList.add('received-message');
+            }
+          
+            messages.appendChild(li);
+
+          });
+    </script>
 </body>
 </html>
