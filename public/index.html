@@ -9,10 +9,15 @@
 <body>
   <div class="chat-container">
     <div class="sidebar">
+      <div class="member-header">
+        <h1>Members</h1>
+      </div>
+        
       <!-- Sidebar content (list of contacts or rooms) -->
     </div>
     <div class="chat-area">
       <div class="chat-header">
+        <h3>Messages</h3>
         <!-- Header content (contact/room name and options) -->
       </div>
       <div class="chat-messages">
@@ -25,59 +30,7 @@
     </div>
   </div>
     <script src="/socket.io/socket.io.js"></script>
-    <script> 
-        const socket = io.connect('http://localhost:3000');
-
-        const username = prompt('Enter your username:');
-        if (username.trim() !== '') {
-            socket.emit('user joined', username);
-        }
-
-        socket.on("update userList", (users) => {
-           
-            
-            users.forEach((user) => {
-                const sideBar = document.querySelector('.sidebar');
-                const li = document.createElement('li');
-                li.textContent = user;
-                sideBar.appendChild(li);
-
-            });
-        });
-        
-        
-        
-
-        document.getElementById('send-button').addEventListener('click', () => {
-            //e.preventDefault();
-            const input = document.querySelector('#message-input');
-            const message = input.value;
-            if (message.trim() !== '') {
-                    const msgObject = {
-                    text: message,
-                    sentByUser: true // Indicate that the message was sent by the user
-            };
-                socket.emit('chat message', msgObject);
-             input.value = '';
-            }
-        });
-
-        socket.on('chat message', (msg) => {
-            const messages = document.querySelector('.chat-messages');
-            const newMessageDiv = document.createElement('div');
-            document.getElementById('message-input').value = "";
-            const li = document.createElement('li');
-            li.textContent = msg.text;
-          
-            if (msg.sentByUser) {
-              li.classList.add('sent-message');
-            } else {
-              li.classList.add('received-message');
-            }
-          
-            messages.appendChild(li);
-
-          });
-    </script>
+    <script src="client-script.js"></script>
+    
 </body>
 </html>

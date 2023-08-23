@@ -6,6 +6,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 const users = [];
+
+
 app.use(express.static(__dirname + '/public'));
 
 io.on('connection', (socket) => {
@@ -14,10 +16,7 @@ io.on('connection', (socket) => {
     socket.username = username;
     
     // Broadcast a system message indicating that a user has joined
-    io.emit('chat message', {
-      text: `${username} has joined the chat.`,
-      system: true
-    });
+    io.emit('chat message',`${username} has joined the chat.`);
 
     if(users.indexOf(username) === -1){
       users.push(username);
@@ -31,7 +30,9 @@ io.on('connection', (socket) => {
  
 
   socket.on('chat message', (msg) => {
-    io.emit('chat message', msg); // Broadcast the message to all connected clients
+    
+    io.emit('chat message', msg);
+   // io.emit('chat message', msg); // Broadcast the message to all connected clients
   });
 
   socket.on('disconnect', () => {
