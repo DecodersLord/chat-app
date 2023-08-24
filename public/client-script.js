@@ -18,6 +18,7 @@ const commands = {
     "/greet": "Hello! How can I help you?"
 };
 
+
 const username = prompt('Enter your username:');
 if (username.trim() !== '') {
     socket.emit('user joined', username);
@@ -34,6 +35,20 @@ socket.on("update userList", (users) => {
         sideBar.appendChild(li);
 
     });
+});
+
+socket.on('disconnect', () => {
+    socket.emit(username);
+});
+
+socket.on('user removed',(user) => {
+    const listItems = document.querySelectorAll('.sidebar li');
+
+    Array.from(listItems).forEach(listItem => {
+        if(listItem.textContent == user){
+            listItem.parentNode.removeChild(listItem);
+        }
+    })
 });
 
 function sendMessage(){

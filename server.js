@@ -7,7 +7,6 @@ const server = http.createServer(app);
 const io = socketIo(server);
 const users = [];
 
-
 app.use(express.static(__dirname + '/public'));
 
 io.on('connection', (socket) => {
@@ -30,13 +29,19 @@ io.on('connection', (socket) => {
  
 
   socket.on('chat message', (msg) => {
-    
     io.emit('chat message', msg);
-   // io.emit('chat message', msg); // Broadcast the message to all connected clients
   });
 
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
+  socket.on('disconnect', (username) => {
+    console.log(users.indexOf(socket.username));
+    const indexOfUser = users.indexOf(socket.username);
+    if(indexOfUser >= 0){
+      users.splice(indexOfUser,1);
+      console.log('A user disconnected');
+      console.log(users);
+      io.emit("user removed", socket.username);
+    }
+    
   });
 });
 
