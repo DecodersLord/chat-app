@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
-import Login from "./components/login/login.jsx";
+import Login from "./components/login/Login.jsx";
 import SignUp from "./components/signup/SignUp.jsx";
 import Home from "./home/Home.jsx";
 import { Navigate, Route, Routes } from "react-router-dom";
